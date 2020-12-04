@@ -1,27 +1,26 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import argparse
 import os
 import sys
 
 template = """ \
 /*
-** src/puzzle/day{day}.rs
+** src/puzzle/day<D>.rs
 */
 
 use crate::puzzle::*;
 
-const INPUT: &'static str = include_str!("../../input/{day}.input");
+const INPUT: &'static str = include_str!("../../input/<D>.input");
 
-pub struct Day{day} {}
+pub struct Day<D> {}
 
-impl Day{day} {
+impl Day<D> {
     pub fn new() -> Self {
-        Day{day} {}
+        Day<D> {}
     }
 }
 
-impl Puzzle for Day{day} {
+impl Puzzle for Day<D> {
     // <QUESTION>
     fn part1(&self) -> Result<Solution> {
         Ok((-1).into())
@@ -45,6 +44,9 @@ if __name__ == "__main__":
     except ValueError:
         sys.exit("error: invalid argument DAY: %r" % n)
 
-    puzzle_dir = os.path.join(os.path.abspath(__file__), "src", "puzzle")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    puzzle_dir = os.path.join(current_dir, "src", "puzzle")
+
+    # write the puzzle source file
     with open(os.path.join(puzzle_dir, 'day%d.rs' % n), 'w') as puzzle_file:
-        puzzle_file.write(template.format(day=n))
+        puzzle_file.write(template.replace('<D>', str(n)))
