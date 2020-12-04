@@ -3,12 +3,13 @@
 */
 
 mod puzzle;
+mod types;
 mod utils;
 
 fn run() -> puzzle::Result<()> {
     println!("Advent of Code 2020\nsolutions by Ian Brault");
 
-    for (day, puz) in puzzle::all_puzzles().into_iter().enumerate() {
+    for (day, puz) in puzzle::all_puzzles()?.into_iter().enumerate() {
         // part 1
         let sol_1 = puz.part1()?;
         println!("Day {}: part 1: {}", day + 1, sol_1);
