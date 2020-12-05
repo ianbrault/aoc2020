@@ -4,6 +4,7 @@
 
 mod day1;
 mod day2;
+mod day3;
 
 use std::error;
 use std::fmt;
@@ -14,6 +15,7 @@ pub type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
 #[derive(Debug)]
 pub enum Solution {
     Int(i64),
+    // FIXME: add a UInt variant
 }
 
 impl From<i64> for Solution {
@@ -37,7 +39,11 @@ pub trait Puzzle {
 }
 
 pub fn all_puzzles() -> Result<Vec<Box<dyn Puzzle>>> {
-    Ok(vec![Box::new(day1::Day1::new()), Box::new(day2::Day2::new()?)])
+    Ok(vec![
+        Box::new(day1::Day1::new()),
+        Box::new(day2::Day2::new()?),
+        Box::new(day3::Day3::new()?),
+    ])
 }
 
 #[derive(Debug)]
