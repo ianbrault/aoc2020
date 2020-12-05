@@ -23,12 +23,12 @@ impl Day<D> {
 impl Puzzle for Day<D> {
     // <QUESTION>
     fn part1(&self) -> Result<Solution> {
-        Ok((-1).into())
+        unimplemented!()
     }
 
     // <QUESTION>
     fn part2(&self) -> Result<Solution> {
-        Ok((-1).into())
+        unimplemented!()
     }
 }
 """
