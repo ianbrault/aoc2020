@@ -10,7 +10,7 @@ use crate::utils::input_to_int_lines;
 const INPUT: &'static str = include_str!("../../input/1.input");
 
 pub struct Day1 {
-    entries: BTreeSet<u64>,
+    entries: BTreeSet<i64>,
 }
 
 impl Day1 {
