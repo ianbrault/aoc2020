@@ -7,7 +7,7 @@ use std::convert::TryFrom;
 use crate::puzzle::*;
 use crate::types::TreeMap;
 
-const INPUT: &'static str = include_str!("../../input/3.input");
+const INPUT: &str = include_str!("../../input/3.input");
 
 pub struct Day3 {
     map: TreeMap,

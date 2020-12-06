@@ -13,17 +13,17 @@ use std::fmt;
 
 #[derive(Debug)]
 enum TypeParseErrorKind {
-    PassportError,
-    PasswordPolicyError,
-    TreeMapError,
+    Passport,
+    PasswordPolicy,
+    TreeMap,
 }
 
 impl TypeParseErrorKind {
     fn type_name(&self) -> &'static str {
         match self {
-            Self::PassportError => "Passport",
-            Self::PasswordPolicyError => "PasswordPolicy",
-            Self::TreeMapError => "TreeMap",
+            Self::Passport => "Passport",
+            Self::PasswordPolicy => "PasswordPolicy",
+            Self::TreeMap => "TreeMap",
         }
     }
 }
@@ -108,7 +108,7 @@ impl PasswordPolicy {
         S: Into<String>,
     {
         TypeParseError {
-            kind: TypeParseErrorKind::PasswordPolicyError,
+            kind: TypeParseErrorKind::PasswordPolicy,
             reason: s.into(),
         }
     }
@@ -117,7 +117,7 @@ impl PasswordPolicy {
         if s.chars().count() != 1 {
             Err(Self::parse_error(format!("invalid character \"{}\"", s)))
         } else {
-            Ok(s.chars().nth(0).unwrap())
+            Ok(s.chars().next().unwrap())
         }
     }
 
@@ -129,7 +129,7 @@ impl PasswordPolicy {
     fn parse_x_y(s: &str) -> Result<(u8, u8), TypeParseError> {
         let parts = s.split('-').collect::<Vec<&str>>();
         match parts.as_slice() {
-            &[xs, ys] => {
+            [xs, ys] => {
                 let x = Self::parse_number(xs)?;
                 let y = Self::parse_number(ys)?;
                 Ok((x, y))
@@ -146,7 +146,7 @@ impl TryFrom<&str> for PasswordPolicy {
         // string should be in the format: <X>-<Y> <C>
         let parts = s.split(' ').collect::<Vec<&str>>();
         match parts.as_slice() {
-            &[srange, schar] => {
+            [srange, schar] => {
                 let character = Self::parse_character(schar)?;
                 let (x, y) = Self::parse_x_y(srange)?;
                 Ok(Self { character, x, y })
@@ -236,7 +236,7 @@ impl TreeMap {
         S: Into<String>,
     {
         TypeParseError {
-            kind: TypeParseErrorKind::TreeMapError,
+            kind: TypeParseErrorKind::TreeMap,
             reason: s.into(),
         }
     }
@@ -246,7 +246,7 @@ impl TreeMap {
             Err(Self::parse_error("map row is too long"))
         } else {
             let it = s.chars().map(|c| c == '#');
-            Ok(Bitfield::from(it.into_iter()))
+            Ok(Bitfield::from(it))
         }
     }
 }
@@ -258,7 +258,7 @@ impl TryFrom<&str> for TreeMap {
         let mut map = vec![];
 
         // get the width of the first line
-        let width = s.split('\n').nth(0).map_or(0, |ss| ss.len());
+        let width = s.split('\n').next().map_or(0, |ss| ss.len());
 
         for line in s.split('\n').filter(|ss| !ss.is_empty()) {
             map.push(Self::parse_map_row(line)?);
@@ -392,14 +392,23 @@ impl TryFrom<&str> for EyeColor {
 // ecl: eye color
 // pid: passport ID
 // cid: country ID (optional)
+// TODO: remove dead_code suppressions
 pub struct Passport {
+    #[allow(dead_code)]
     byr: u16,
+    #[allow(dead_code)]
     iyr: u16,
+    #[allow(dead_code)]
     eyr: u16,
+    #[allow(dead_code)]
     hgt: Height,
+    #[allow(dead_code)]
     hcl: &'static str,
+    #[allow(dead_code)]
     ecl: EyeColor,
+    #[allow(dead_code)]
     pid: u32,
+    #[allow(dead_code)]
     cid: Option<&'static str>,
 }
 
@@ -409,7 +418,7 @@ impl Passport {
         S: Into<String>,
     {
         TypeParseError {
-            kind: TypeParseErrorKind::TreeMapError,
+            kind: TypeParseErrorKind::Passport,
             reason: s.into(),
         }
     }
@@ -423,7 +432,7 @@ impl Passport {
             .collect::<HashMap<&str, bool>>();
 
         for entry in batch.split_whitespace().filter(|s| !s.is_empty()) {
-            let key = entry.split(':').nth(0).unwrap();
+            let key = entry.split(':').next().unwrap();
             if keys.contains_key(&key) {
                 keys.insert(key, true);
             }

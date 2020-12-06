@@ -7,7 +7,7 @@ use std::collections::BTreeSet;
 use crate::puzzle::*;
 use crate::utils::input_to_int_lines;
 
-const INPUT: &'static str = include_str!("../../input/1.input");
+const INPUT: &str = include_str!("../../input/1.input");
 
 pub struct Day1 {
     entries: BTreeSet<i64>,

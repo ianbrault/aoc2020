@@ -10,7 +10,7 @@ template = """\
 
 use crate::puzzle::*;
 
-const INPUT: &'static str = include_str!("../../input/<D>.input");
+const INPUT: &str = include_str!("../../input/<D>.input");
 
 pub struct Day<D> {}
 

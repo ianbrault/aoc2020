@@ -7,7 +7,7 @@ use std::convert::TryFrom;
 use crate::puzzle::*;
 use crate::types::{Password, PasswordPolicy, PasswordPolicyRule};
 
-const INPUT: &'static str = include_str!("../../input/2.input");
+const INPUT: &str = include_str!("../../input/2.input");
 
 pub struct Day2 {
     password_db: Vec<(Password, PasswordPolicy)>,
