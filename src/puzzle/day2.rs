@@ -41,23 +41,25 @@ impl Puzzle for Day2 {
     // policies?
     fn part1(&self) -> Result<Solution> {
         // count the number of valid passwords, using the range policy
-        let n_valid = self.password_db
+        let n_valid = self
+            .password_db
             .iter()
             .filter(|(pwd, policy)| pwd.is_valid(policy, PasswordPolicyRule::RangePolicy))
             .count();
 
-        Ok((n_valid as i64).into())
+        Ok((n_valid as u64).into())
     }
 
     // How many passwords are valid according to the new (position-based)
     // interpretation of the policies?
     fn part2(&self) -> Result<Solution> {
         // count the number of valid passwords, using the position policy
-        let n_valid = self.password_db
+        let n_valid = self
+            .password_db
             .iter()
             .filter(|(pwd, policy)| pwd.is_valid(policy, PasswordPolicyRule::PositionPolicy))
             .count();
 
-        Ok((n_valid as i64).into())
+        Ok((n_valid as u64).into())
     }
 }

@@ -15,7 +15,7 @@ pub type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
 #[derive(Debug)]
 pub enum Solution {
     Int(i64),
-    // FIXME: add a UInt variant
+    UInt(u64),
 }
 
 impl From<i64> for Solution {
@@ -24,10 +24,17 @@ impl From<i64> for Solution {
     }
 }
 
+impl From<u64> for Solution {
+    fn from(n: u64) -> Self {
+        Self::UInt(n)
+    }
+}
+
 impl fmt::Display for Solution {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Int(i) => write!(f, "{}", i),
+            Self::UInt(u) => write!(f, "{}", u),
         }
     }
 }

@@ -1,4 +1,4 @@
- /*
+/*
 ** src/puzzle/day3.rs
 */
 
@@ -26,7 +26,7 @@ impl Puzzle for Day3 {
     fn part1(&self) -> Result<Solution> {
         // traverse the tree map, counting encountered trees
         let n_trees = self.map.traverse(1, 3).filter(|b| *b).count();
-        Ok((n_trees as i64).into())
+        Ok((n_trees as u64).into())
     }
 
     // What do you get if you multiply together the number of trees encountered
@@ -41,6 +41,6 @@ impl Puzzle for Day3 {
             n_trees *= n;
         }
 
-        Ok((n_trees as i64).into())
+        Ok((n_trees as u64).into())
     }
 }

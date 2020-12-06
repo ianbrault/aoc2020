@@ -67,7 +67,8 @@ impl Bitfield {
 // important: the iterator is treated as going from the least-significant to
 // most-significant bit in the bitfield
 impl<I> From<I> for Bitfield
-where I: Iterator<Item=bool>
+where
+    I: Iterator<Item = bool>,
 {
     fn from(it: I) -> Self {
         let mut data = 0;
@@ -112,17 +113,15 @@ impl PasswordPolicy {
 
     fn parse_character(s: &str) -> Result<char, TypeParseError> {
         if s.chars().count() != 1 {
-            Err(Self::parse_error(format!(
-                "invalid character \"{}\"",
-                s
-            )))
+            Err(Self::parse_error(format!("invalid character \"{}\"", s)))
         } else {
             Ok(s.chars().nth(0).unwrap())
         }
     }
 
     fn parse_number(s: &str) -> Result<u8, TypeParseError> {
-        s.parse::<u8>().map_err(|_| Self::parse_error(format!("\"{}\" is not an integer", s)))
+        s.parse::<u8>()
+            .map_err(|_| Self::parse_error(format!("\"{}\" is not an integer", s)))
     }
 
     fn parse_x_y(s: &str) -> Result<(u8, u8), TypeParseError> {
@@ -133,10 +132,7 @@ impl PasswordPolicy {
                 let y = Self::parse_number(ys)?;
                 Ok((x, y))
             }
-            _ => Err(Self::parse_error(format!(
-                "invalid range \"{}\"",
-                s
-            ))),
+            _ => Err(Self::parse_error(format!("invalid range \"{}\"", s))),
         }
     }
 }
@@ -146,7 +142,6 @@ impl TryFrom<&str> for PasswordPolicy {
 
     fn try_from(s: &str) -> Result<Self, Self::Error> {
         // string should be in the format: <X>-<Y> <C>
-        // FIXME: add a util wrapper for the following pattern
         let parts = s.split(' ').collect::<Vec<&str>>();
         match parts.as_slice() {
             &[srange, schar] => {
@@ -181,7 +176,7 @@ impl Password {
             PasswordPolicyRule::RangePolicy => {
                 let range = (policy.x)..(policy.y + 1);
                 range.contains(&self.count(policy.character))
-            },
+            }
             PasswordPolicyRule::PositionPolicy => {
                 // note: passwords are NOT zero-indexed
                 let x = policy.x - 1;
@@ -191,7 +186,7 @@ impl Password {
                 let cy = self.string.chars().nth(y as usize).unwrap();
                 // xor == exactly 1 is equal
                 (cx == policy.character) ^ (cy == policy.character)
-            },
+            }
         }
     }
 }
@@ -206,7 +201,10 @@ impl From<&'static str> for Password {
             *item += 1;
         }
 
-        Self { string: s, freq_map }
+        Self {
+            string: s,
+            freq_map,
+        }
     }
 }
 
@@ -279,7 +277,12 @@ pub struct TreeMapTraverser<'a> {
 
 impl<'a> TreeMapTraverser<'a> {
     fn new(tree_map: &'a TreeMap, dy: u8, dx: u8) -> Self {
-        Self { tree_map, dy, dx, pos: (0, 0) }
+        Self {
+            tree_map,
+            dy,
+            dx,
+            pos: (0, 0),
+        }
     }
 }
 
