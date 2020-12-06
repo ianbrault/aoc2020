@@ -3,7 +3,7 @@
 import os
 import sys
 
-template = """ \
+template = """\
 /*
 ** src/puzzle/day<D>.rs
 */
