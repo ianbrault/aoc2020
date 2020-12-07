@@ -1,5 +1,6 @@
 /*
 ** src/puzzle/day1.rs
+** https://adventofcode.com/2020/day/1
 */
 
 use std::collections::BTreeSet;
@@ -16,7 +17,7 @@ pub struct Day1 {
 impl Day1 {
     pub fn new() -> Self {
         let entries = input_to_int_lines(INPUT).collect();
-        Day1 { entries }
+        Self { entries }
     }
 }
 

@@ -4,6 +4,7 @@
 */
 
 use crate::puzzle::*;
+use crate::utils::input_to_lines;
 
 const INPUT: &str = include_str!("../../input/5.input");
 
@@ -61,9 +62,7 @@ pub struct Day5 {
 
 impl Day5 {
     pub fn new() -> Self {
-        let boarding_passes = INPUT
-            .split('\n')
-            .filter(|s| !s.is_empty())
+        let boarding_passes = input_to_lines(INPUT)
             .map(BoardingPass::from)
             .collect();
 

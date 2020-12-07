@@ -6,6 +6,7 @@ import sys
 template = """\
 /*
 ** src/puzzle/day<D>.rs
+** https://adventofcode.com/2020/day/<D>
 */
 
 use crate::puzzle::*;
@@ -16,7 +17,7 @@ pub struct Day<D> {}
 
 impl Day<D> {
     pub fn new() -> Self {
-        Day<D> {}
+        Self {}
     }
 }
 

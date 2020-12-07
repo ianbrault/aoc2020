@@ -1,29 +1,126 @@
 /*
 ** src/puzzle/day3.rs
+** https://adventofcode.com/2020/day/3
 */
 
 use std::convert::TryFrom;
 
-use crate::puzzle::*;
-use crate::types::TreeMap;
+use crate::puzzle::{self, Puzzle, Solution};
+use crate::types::{Bitfield, TypeParseError, TypeParseErrorKind};
 
 const INPUT: &str = include_str!("../../input/3.input");
+
+// terrain map which indicates the locations of trees
+pub struct TreeMap {
+    // each row is stored as a bitfield, where a bit is set if there is a tree
+    map: Vec<Bitfield>,
+    pub width: usize,
+    pub height: usize,
+}
+
+impl TreeMap {
+    pub fn at(&self, x: usize, y: usize) -> bool {
+        if y >= self.height {
+            false
+        } else {
+            self.map[y].at(x % self.width)
+        }
+    }
+
+    pub fn traverse(&self, dy: u8, dx: u8) -> TreeMapTraverser {
+        TreeMapTraverser::new(self, dy, dx)
+    }
+
+    fn parse_error<S>(s: S) -> TypeParseError
+    where
+        S: Into<String>,
+    {
+        TypeParseError::new(TypeParseErrorKind::TreeMap, s)
+    }
+
+    fn parse_map_row(s: &str) -> Result<Bitfield, TypeParseError> {
+        if s.len() > 32 {
+            Err(Self::parse_error("map row is too long"))
+        } else {
+            let it = s.chars().map(|c| c == '#');
+            Ok(Bitfield::from(it))
+        }
+    }
+}
+
+impl TryFrom<&str> for TreeMap {
+    type Error = TypeParseError;
+
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
+        let mut map = vec![];
+
+        // get the width of the first line
+        let width = s.split('\n').next().map_or(0, |ss| ss.len());
+
+        for line in s.split('\n').filter(|ss| !ss.is_empty()) {
+            map.push(Self::parse_map_row(line)?);
+        }
+
+        let height = map.len();
+        Ok(Self { map, width, height })
+    }
+}
+
+// used to traverse a TreeMap at a given slope, as an iterator
+pub struct TreeMapTraverser<'a> {
+    tree_map: &'a TreeMap,
+    dy: u8,
+    dx: u8,
+    pos: (usize, usize),
+}
+
+impl<'a> TreeMapTraverser<'a> {
+    fn new(tree_map: &'a TreeMap, dy: u8, dx: u8) -> Self {
+        Self {
+            tree_map,
+            dy,
+            dx,
+            pos: (0, 0),
+        }
+    }
+}
+
+impl<'a> Iterator for TreeMapTraverser<'a> {
+    // each iteration returns whether or not there is a tree at the new position
+    type Item = bool;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let (mut x, mut y) = self.pos;
+        x += self.dx as usize;
+        y += self.dy as usize;
+
+        let res = if y >= self.tree_map.height {
+            // reached the bottom, done iterating
+            None
+        } else {
+            Some(self.tree_map.at(x, y))
+        };
+
+        self.pos = (x, y);
+        res
+    }
+}
 
 pub struct Day3 {
     map: TreeMap,
 }
 
 impl Day3 {
-    pub fn new() -> Result<Self> {
+    pub fn new() -> puzzle::Result<Self> {
         let map = TreeMap::try_from(INPUT)?;
-        Ok(Day3 { map })
+        Ok(Self { map })
     }
 }
 
 impl Puzzle for Day3 {
     // Starting at the top-left corner of your map and following a slope of
     // right 3 and down 1, how many trees would you encounter?
-    fn part1(&self) -> Result<Solution> {
+    fn part1(&self) -> puzzle::Result<Solution> {
         // traverse the tree map, counting encountered trees
         let n_trees = self.map.traverse(1, 3).filter(|b| *b).count();
         Ok((n_trees as u64).into())
@@ -31,7 +128,7 @@ impl Puzzle for Day3 {
 
     // What do you get if you multiply together the number of trees encountered
     // on each of the listed slopes?
-    fn part2(&self) -> Result<Solution> {
+    fn part2(&self) -> puzzle::Result<Solution> {
         let slopes = vec![(1, 1), (1, 3), (1, 5), (1, 7), (2, 1)];
 
         // traverse the tree map for each given slope
