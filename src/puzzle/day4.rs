@@ -9,7 +9,7 @@ use std::convert::TryFrom;
 use crate::puzzle::{self, Puzzle, Solution};
 use crate::types::{TypeParseError, TypeParseErrorKind};
 
-const INPUT: &'static str = include_str!("../../input/4.input");
+const INPUT: &str = include_str!("../../input/4.input");
 
 // passport height
 pub enum Height {
@@ -205,9 +205,8 @@ impl TryFrom<&'static str> for Passport {
         let mut builder = PassportBuilder::default();
 
         for entry in batch.split_whitespace().filter(|s| !s.is_empty()) {
-            // FIXME: add match_split! macro
-            let (key, value) = match entry.split(':').collect::<Vec<&str>>().as_slice() {
-                &[k, v] => (k, v),
+            let (key, value) = match split!(entry, ':') {
+                [k, v] => (*k, *v),
                 _ => unreachable!(),
             };
             builder.set(key, value)?;

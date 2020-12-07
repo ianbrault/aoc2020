@@ -24,10 +24,10 @@ impl BoardingPass {
             match c {
                 _ if c == cmin => {
                     mmax -= delta;
-                },
+                }
                 _ if c == cmax => {
                     mmin += delta;
-                },
+                }
                 _ => unreachable!(),
             }
         }
@@ -37,7 +37,8 @@ impl BoardingPass {
 
     // converts the boarding pass string representation into a row and column
     fn str_to_row_col<S>(s: S) -> (u8, u8)
-    where S: AsRef<str>
+    where
+        S: AsRef<str>,
     {
         let row = Self::binary_partition(&s.as_ref()[0..7], 0, 128, 'F', 'B');
         let col = Self::binary_partition(&s.as_ref()[7..10], 0, 8, 'L', 'R');
@@ -46,7 +47,8 @@ impl BoardingPass {
 }
 
 impl<S> From<S> for BoardingPass
-where S: AsRef<str>
+where
+    S: AsRef<str>,
 {
     fn from(s: S) -> Self {
         let (row, col) = Self::str_to_row_col(s);
@@ -62,23 +64,16 @@ pub struct Day5 {
 
 impl Day5 {
     pub fn new() -> Self {
-        let boarding_passes = input_to_lines(INPUT)
-            .map(BoardingPass::from)
-            .collect();
+        let boarding_passes = input_to_lines(INPUT).map(BoardingPass::from).collect();
 
-        Self {
-            boarding_passes
-        }
+        Self { boarding_passes }
     }
 }
 
 impl Puzzle for Day5 {
     // What is the highest seat ID on a boarding pass?
     fn part1(&self) -> Result<Solution> {
-        let max_id = self.boarding_passes
-            .iter()
-            .map(|bp| bp.id)
-            .max().unwrap();
+        let max_id = self.boarding_passes.iter().map(|bp| bp.id).max().unwrap();
 
         Ok(max_id.into())
     }
@@ -86,7 +81,8 @@ impl Puzzle for Day5 {
     // What is the ID of your seat?
     fn part2(&self) -> Result<Solution> {
         // collect boarding pass IDs and sort
-        let mut bp_ids = self.boarding_passes
+        let mut bp_ids = self
+            .boarding_passes
             .iter()
             .map(|bp| bp.id)
             .collect::<Vec<u64>>();

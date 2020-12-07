@@ -30,7 +30,8 @@ pub struct TypeParseError {
 
 impl TypeParseError {
     pub fn new<S>(kind: TypeParseErrorKind, reason: S) -> Self
-    where S: Into<String>
+    where
+        S: Into<String>,
     {
         Self {
             kind,

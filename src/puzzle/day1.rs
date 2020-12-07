@@ -6,7 +6,7 @@
 use std::collections::BTreeSet;
 
 use crate::puzzle::*;
-use crate::utils::input_to_int_lines;
+use crate::utils::input_to_parsed_lines;
 
 const INPUT: &str = include_str!("../../input/1.input");
 
@@ -16,7 +16,7 @@ pub struct Day1 {
 
 impl Day1 {
     pub fn new() -> Self {
-        let entries = input_to_int_lines(INPUT).collect();
+        let entries = input_to_parsed_lines(INPUT).collect();
         Self { entries }
     }
 }

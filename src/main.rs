@@ -2,9 +2,11 @@
 ** src/main.rs
 */
 
+#[macro_use]
+mod utils;
+
 mod puzzle;
 mod types;
-mod utils;
 
 fn run() -> puzzle::Result<()> {
     println!("Advent of Code 2020\nsolutions by Ian Brault");

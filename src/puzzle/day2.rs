@@ -53,9 +53,7 @@ impl PasswordPolicy {
     }
 
     fn parse_x_y(s: &str) -> Result<(u8, u8), TypeParseError> {
-        // FIXME: add split_match! macro
-        let parts = s.split('-').collect::<Vec<&str>>();
-        match parts.as_slice() {
+        match split!(s, '-') {
             [xs, ys] => {
                 let x = Self::parse_number(xs)?;
                 let y = Self::parse_number(ys)?;
@@ -71,9 +69,7 @@ impl TryFrom<&str> for PasswordPolicy {
 
     fn try_from(s: &str) -> Result<Self, Self::Error> {
         // string should be in the format: <X>-<Y> <C>
-        // FIXME: add split_match! macro
-        let parts = s.split(' ').collect::<Vec<&str>>();
-        match parts.as_slice() {
+        match split!(s, ' ') {
             [srange, schar] => {
                 let character = Self::parse_character(schar)?;
                 let (x, y) = Self::parse_x_y(srange)?;
@@ -148,12 +144,10 @@ impl Day2 {
         let mut password_db = vec![];
 
         for line in input_to_lines(INPUT) {
-            // FIXME: add split_match! macro
-            let parts = line.split(": ").collect::<Vec<&str>>();
-            let entry = match parts.as_slice() {
-                &[spolicy, spass] => {
-                    let password = Password::from(spass);
-                    let policy = PasswordPolicy::try_from(spolicy)?;
+            let entry = match split!(line, ": ") {
+                [spolicy, spass] => {
+                    let password = Password::from(*spass);
+                    let policy = PasswordPolicy::try_from(*spolicy)?;
                     Ok((password, policy))
                 }
                 _ => Err(PuzzleError::InvalidInput(line.into())),
