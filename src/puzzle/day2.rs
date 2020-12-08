@@ -3,11 +3,10 @@
 ** https://adventofcode.com/2020/day/2
 */
 
-use std::collections::HashMap;
 use std::convert::TryFrom;
 
 use crate::puzzle::{self, Puzzle, PuzzleError, Solution};
-use crate::types::{TypeParseError, TypeParseErrorKind};
+use crate::types::{Counter, TypeParseError, TypeParseErrorKind};
 use crate::utils::input_to_lines;
 
 const INPUT: &str = include_str!("../../input/2.input");
@@ -24,7 +23,6 @@ enum PasswordPolicyRule {
 
 // defines the validity of a password
 // see PasswordPolicyRule for specifics
-#[derive(Debug)]
 struct PasswordPolicy {
     character: char,
     x: u8,
@@ -83,25 +81,17 @@ impl TryFrom<&str> for PasswordPolicy {
 // a password
 // also stores the frequency of each character in the password string for the
 // range-based password policy
-#[derive(Debug)]
 struct Password<'a> {
     string: &'a str,
-    freq_map: HashMap<char, u8>,
+    freq_map: Counter<char>,
 }
 
 impl<'a> Password<'a> {
-    fn count(&self, key: char) -> u8 {
-        match self.freq_map.get(&key) {
-            Some(&count) => count,
-            None => 0,
-        }
-    }
-
     fn is_valid(&self, policy: &PasswordPolicy, policy_rule: PasswordPolicyRule) -> bool {
         match policy_rule {
             PasswordPolicyRule::RangePolicy => {
                 let range = (policy.x)..(policy.y + 1);
-                range.contains(&self.count(policy.character))
+                range.contains(&(self.freq_map.get(&policy.character) as u8))
             }
             PasswordPolicyRule::PositionPolicy => {
                 // note: passwords are NOT zero-indexed
@@ -118,19 +108,9 @@ impl<'a> Password<'a> {
 }
 
 impl<'a> From<&'a str> for Password<'a> {
-    fn from(s: &'a str) -> Self {
-        // pre-allocate freq_map using the length of the string, for worst case
-        let mut freq_map = HashMap::with_capacity(s.len());
-
-        for c in s.chars() {
-            let item = freq_map.entry(c).or_insert(0);
-            *item += 1;
-        }
-
-        Self {
-            string: s,
-            freq_map,
-        }
+    fn from(string: &'a str) -> Self {
+        let freq_map = Counter::from(string.chars());
+        Self { string, freq_map }
     }
 }
 

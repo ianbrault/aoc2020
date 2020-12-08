@@ -2,8 +2,10 @@
 ** src/types.rs
 */
 
+use std::collections::{HashMap, hash_map::IntoIter};
 use std::error;
 use std::fmt;
+use std::hash::Hash;
 
 #[derive(Debug)]
 pub enum TypeParseErrorKind {
@@ -86,5 +88,56 @@ where
         }
 
         Self { data }
+    }
+}
+
+pub struct Counter<T> {
+    counts: HashMap<T, usize>,
+}
+
+impl<T> Counter<T>
+where
+    T: Eq + Hash,
+{
+    pub fn new() -> Self {
+        Self { counts: HashMap::new() }
+    }
+
+    pub fn get(&self, key: &T) -> usize {
+        match self.counts.get(key) {
+            Some(&count) => count,
+            None => 0,
+        }
+    }
+
+    pub fn extend<Iter>(&mut self, iter: Iter)
+    where
+        Iter: Iterator<Item = T>
+    {
+        for item in iter {
+            let entry = self.counts.entry(item).or_insert(0);
+            *entry += 1;
+        }
+    }
+}
+
+impl<T> IntoIterator for Counter<T> {
+    type Item = (T, usize);
+    type IntoIter = IntoIter<T, usize>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.counts.into_iter()
+    }
+}
+
+impl<Iter, T> From<Iter> for Counter<T>
+where
+    Iter: Iterator<Item = T>,
+    T: Eq + Hash
+{
+    fn from(iter: Iter) -> Self {
+        let mut counter = Self::new();
+        counter.extend(iter);
+        counter
     }
 }
