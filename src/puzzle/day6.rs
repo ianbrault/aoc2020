@@ -17,10 +17,7 @@ pub struct Day6 {
 
 impl Day6 {
     pub fn new() -> Self {
-        let groups = INPUT
-            .split("\n\n")
-            .filter(|s| !s.is_empty())
-            .collect();
+        let groups = INPUT.split("\n\n").filter(|s| !s.is_empty()).collect();
 
         Self { groups }
     }

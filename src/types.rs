@@ -2,7 +2,7 @@
 ** src/types.rs
 */
 
-use std::collections::{HashMap, hash_map::IntoIter};
+use std::collections::{hash_map::IntoIter, HashMap};
 use std::error;
 use std::fmt;
 use std::hash::Hash;
@@ -100,7 +100,9 @@ where
     T: Eq + Hash,
 {
     pub fn new() -> Self {
-        Self { counts: HashMap::new() }
+        Self {
+            counts: HashMap::new(),
+        }
     }
 
     pub fn get(&self, key: &T) -> usize {
@@ -112,7 +114,7 @@ where
 
     pub fn extend<Iter>(&mut self, iter: Iter)
     where
-        Iter: Iterator<Item = T>
+        Iter: Iterator<Item = T>,
     {
         for item in iter {
             let entry = self.counts.entry(item).or_insert(0);
@@ -133,7 +135,7 @@ impl<T> IntoIterator for Counter<T> {
 impl<Iter, T> From<Iter> for Counter<T>
 where
     Iter: Iterator<Item = T>,
-    T: Eq + Hash
+    T: Eq + Hash,
 {
     fn from(iter: Iter) -> Self {
         let mut counter = Self::new();
