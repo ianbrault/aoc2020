@@ -10,16 +10,12 @@ use std::hash::Hash;
 #[derive(Debug)]
 pub enum TypeParseErrorKind {
     Passport,
-    PasswordPolicy,
-    TreeMap,
 }
 
 impl TypeParseErrorKind {
     fn type_name(&self) -> &'static str {
         match self {
             Self::Passport => "Passport",
-            Self::PasswordPolicy => "PasswordPolicy",
-            Self::TreeMap => "TreeMap",
         }
     }
 }

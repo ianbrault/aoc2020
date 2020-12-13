@@ -3,10 +3,8 @@
 ** https://adventofcode.com/2020/day/3
 */
 
-use std::convert::TryFrom;
-
 use crate::puzzle::{self, Puzzle, Solution};
-use crate::types::{Bitfield, TypeParseError, TypeParseErrorKind};
+use crate::types::Bitfield;
 
 const INPUT: &str = include_str!("../../input/3.input");
 
@@ -31,38 +29,34 @@ impl TreeMap {
         TreeMapTraverser::new(self, dy, dx)
     }
 
-    fn parse_error<S>(s: S) -> TypeParseError
-    where
-        S: Into<String>,
-    {
-        TypeParseError::new(TypeParseErrorKind::TreeMap, s)
-    }
-
-    fn parse_map_row(s: &str) -> Result<Bitfield, TypeParseError> {
+    fn parse_map_row(s: &str) -> Bitfield {
         if s.len() > 32 {
-            Err(Self::parse_error("map row is too long"))
+            // NOTE: need to use a larger bitfield if this panic! is ever hit
+            unreachable!(format!("map row \"{}\" is too long", s))
         } else {
-            let it = s.chars().map(|c| c == '#');
-            Ok(Bitfield::from(it))
+            Bitfield::from(s.chars().map(|c| c == '#'))
         }
     }
 }
 
-impl TryFrom<&str> for TreeMap {
-    type Error = TypeParseError;
-
-    fn try_from(s: &str) -> Result<Self, Self::Error> {
+impl From<&str> for TreeMap {
+    fn from(s: &str) -> Self {
         let mut map = vec![];
 
         // get the width of the first line
         let width = s.split('\n').next().map_or(0, |ss| ss.len());
 
         for line in s.split('\n').filter(|ss| !ss.is_empty()) {
-            map.push(Self::parse_map_row(line)?);
+            map.push(Self::parse_map_row(line));
         }
 
         let height = map.len();
-        Ok(Self { map, width, height })
+
+        Self {
+            map,
+            width,
+            height,
+        }
     }
 }
 
@@ -111,9 +105,10 @@ pub struct Day3 {
 }
 
 impl Day3 {
-    pub fn new() -> puzzle::Result<Self> {
-        let map = TreeMap::try_from(INPUT)?;
-        Ok(Self { map })
+    pub fn new() -> Self {
+        Self {
+            map: TreeMap::from(INPUT),
+        }
     }
 }
 

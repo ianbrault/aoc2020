@@ -3,10 +3,8 @@
 ** https://adventofcode.com/2020/day/2
 */
 
-use std::convert::TryFrom;
-
-use crate::puzzle::{self, Puzzle, PuzzleError, Solution};
-use crate::types::{Counter, TypeParseError, TypeParseErrorKind};
+use crate::puzzle::{self, Puzzle, Solution};
+use crate::types::Counter;
 use crate::utils::input_to_lines;
 
 const INPUT: &str = include_str!("../../input/2.input");
@@ -30,50 +28,41 @@ struct PasswordPolicy {
 }
 
 impl PasswordPolicy {
-    fn parse_error<S>(s: S) -> TypeParseError
-    where
-        S: Into<String>,
-    {
-        TypeParseError::new(TypeParseErrorKind::PasswordPolicy, s)
+    fn parse_character(s: &str) -> char {
+        s.chars().next().unwrap()
     }
 
-    fn parse_character(s: &str) -> Result<char, TypeParseError> {
-        if s.chars().count() != 1 {
-            Err(Self::parse_error(format!("invalid character \"{}\"", s)))
-        } else {
-            Ok(s.chars().next().unwrap())
-        }
+    fn parse_number(s: &str) -> u8 {
+        s.parse().unwrap()
     }
 
-    fn parse_number(s: &str) -> Result<u8, TypeParseError> {
-        s.parse::<u8>()
-            .map_err(|_| Self::parse_error(format!("\"{}\" is not an integer", s)))
-    }
-
-    fn parse_x_y(s: &str) -> Result<(u8, u8), TypeParseError> {
+    fn parse_x_y(s: &str) -> (u8, u8) {
         match split!(s, '-') {
             [xs, ys] => {
-                let x = Self::parse_number(xs)?;
-                let y = Self::parse_number(ys)?;
-                Ok((x, y))
+                let x = Self::parse_number(xs);
+                let y = Self::parse_number(ys);
+                (x, y)
             }
-            _ => Err(Self::parse_error(format!("invalid range \"{}\"", s))),
+            _ => unreachable!()
         }
     }
 }
 
-impl TryFrom<&str> for PasswordPolicy {
-    type Error = TypeParseError;
-
-    fn try_from(s: &str) -> Result<Self, Self::Error> {
+impl From<&str> for PasswordPolicy {
+    fn from(s: &str) -> Self {
         // string should be in the format: <X>-<Y> <C>
         match split!(s, ' ') {
             [srange, schar] => {
-                let character = Self::parse_character(schar)?;
-                let (x, y) = Self::parse_x_y(srange)?;
-                Ok(Self { character, x, y })
+                let character = Self::parse_character(schar);
+                let (x, y) = Self::parse_x_y(srange);
+
+                Self {
+                    character,
+                    x,
+                    y,
+                }
             }
-            _ => Err(Self::parse_error(s)),
+            _ => unreachable!()
         }
     }
 }
@@ -119,7 +108,7 @@ pub struct Day2 {
 }
 
 impl Day2 {
-    pub fn new() -> puzzle::Result<Self> {
+    pub fn new() -> Self {
         // parse input into passwords and password policies
         let mut password_db = vec![];
 
@@ -127,16 +116,18 @@ impl Day2 {
             let entry = match split!(line, ": ") {
                 [spolicy, spass] => {
                     let password = Password::from(*spass);
-                    let policy = PasswordPolicy::try_from(*spolicy)?;
-                    Ok((password, policy))
+                    let policy = PasswordPolicy::from(*spolicy);
+                    (password, policy)
                 }
-                _ => Err(PuzzleError::InvalidInput(line.into())),
-            }?;
+                _ => unreachable!()
+            };
 
             password_db.push(entry);
         }
 
-        Ok(Self { password_db })
+        Self {
+            password_db
+        }
     }
 }
 

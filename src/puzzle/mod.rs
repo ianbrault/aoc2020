@@ -52,8 +52,8 @@ pub trait Puzzle {
 pub fn all_puzzles() -> Result<Vec<Box<dyn Puzzle>>> {
     Ok(vec![
         Box::new(day1::Day1::new()),
-        Box::new(day2::Day2::new()?),
-        Box::new(day3::Day3::new()?),
+        Box::new(day2::Day2::new()),
+        Box::new(day3::Day3::new()),
         Box::new(day4::Day4::new()),
         Box::new(day5::Day5::new()),
         Box::new(day6::Day6::new()),
@@ -64,14 +64,12 @@ pub fn all_puzzles() -> Result<Vec<Box<dyn Puzzle>>> {
 #[derive(Debug)]
 pub enum PuzzleError {
     NoSolution,
-    InvalidInput(String),
 }
 
 impl fmt::Display for PuzzleError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::NoSolution => write!(f, "no solution found for the puzzle"),
-            Self::InvalidInput(s) => write!(f, "invalid input: {}", s),
         }
     }
 }
