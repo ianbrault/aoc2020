@@ -43,7 +43,7 @@ impl PasswordPolicy {
                 let y = Self::parse_number(ys);
                 (x, y)
             }
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }
@@ -56,13 +56,9 @@ impl From<&str> for PasswordPolicy {
                 let character = Self::parse_character(schar);
                 let (x, y) = Self::parse_x_y(srange);
 
-                Self {
-                    character,
-                    x,
-                    y,
-                }
+                Self { character, x, y }
             }
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }
@@ -119,15 +115,13 @@ impl Day2 {
                     let policy = PasswordPolicy::from(*spolicy);
                     (password, policy)
                 }
-                _ => unreachable!()
+                _ => unreachable!(),
             };
 
             password_db.push(entry);
         }
 
-        Self {
-            password_db
-        }
+        Self { password_db }
     }
 }
 

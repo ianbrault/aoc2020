@@ -52,11 +52,7 @@ impl From<&str> for TreeMap {
 
         let height = map.len();
 
-        Self {
-            map,
-            width,
-            height,
-        }
+        Self { map, width, height }
     }
 }
 

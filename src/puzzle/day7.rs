@@ -50,10 +50,7 @@ impl From<&'static str> for Rule {
                 .collect()
         };
 
-        Self {
-            bag,
-            contains,
-        }
+        Self { bag, contains }
     }
 }
 
@@ -79,11 +76,10 @@ impl<'a> BagSolver1<'a> {
 
     fn process_rule(&mut self, rule: &Rule) {
         // check if the bag contains a shiny gold bag
-        let contains_gold = rule.contains
-            .iter()
-            .any(|(_, b)| *b == "shiny gold");
+        let contains_gold = rule.contains.iter().any(|(_, b)| *b == "shiny gold");
         // also check if any of the contained bags are in the solved set
-        let contains_solved = rule.contains
+        let contains_solved = rule
+            .contains
             .iter()
             .any(|(_, b)| self.solved_set.contains(b));
 
@@ -119,13 +115,9 @@ struct BagSolver2<'a> {
 
 impl<'a> BagSolver2<'a> {
     fn new(rules: impl Iterator<Item = &'a Rule>) -> Self {
-        let rule_map = rules
-            .map(|r| (r.bag, &r.contains))
-            .collect();
+        let rule_map = rules.map(|r| (r.bag, &r.contains)).collect();
 
-        Self {
-            rule_map,
-        }
+        Self { rule_map }
     }
 
     fn count_contained_bags(&self, bag: &'a str) -> u64 {
@@ -152,13 +144,8 @@ pub struct Day7 {
 
 impl Day7 {
     pub fn new() -> Self {
-        let rules = input_to_lines(INPUT)
-            .map(Rule::from)
-            .collect();
-
-        Self {
-            rules
-        }
+        let rules = input_to_lines(INPUT).map(Rule::from).collect();
+        Self { rules }
     }
 }
 
