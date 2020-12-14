@@ -9,6 +9,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 use std::error;
 use std::fmt;
@@ -58,6 +59,7 @@ pub fn all_puzzles() -> Result<Vec<Box<dyn Puzzle>>> {
         Box::new(day5::Day5::new()),
         Box::new(day6::Day6::new()),
         Box::new(day7::Day7::new()),
+        Box::new(day8::Day8::new()),
     ])
 }
 

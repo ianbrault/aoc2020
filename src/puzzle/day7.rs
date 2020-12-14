@@ -88,7 +88,7 @@ impl<'a> BagSolver1<'a> {
         } else {
             // otherwise, add the rule to the holding cell
             for (_, contained) in rule.contains.iter() {
-                let cell = self.holding_cell.entry(contained).or_insert(vec![]);
+                let cell = self.holding_cell.entry(contained).or_insert_with(Vec::new);
                 cell.push(rule.bag);
             }
         }
