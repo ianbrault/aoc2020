@@ -106,8 +106,8 @@ where
         // get the next item
         if let Some(curr) = self.inner.next() {
             // peek the following item
-            if let Some(following) = self.inner.peek() {
-                Some((self.combinator)(curr, following))
+            if let Some(after) = self.inner.peek() {
+                Some((self.combinator)(curr, after))
             } else {
                 None
             }
