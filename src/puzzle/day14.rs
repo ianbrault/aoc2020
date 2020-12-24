@@ -4,7 +4,6 @@
 */
 
 use std::collections::HashMap;
-use std::fmt;
 
 use crate::puzzle::*;
 use crate::utils::input_to_lines;
@@ -28,17 +27,6 @@ impl From<char> for MaskBit {
             '1' => Self::One,
             'X' => Self::X,
             _ => unreachable!(),
-        }
-    }
-}
-
-// FIXME: remove
-impl ToString for MaskBit {
-    fn to_string(&self) -> String {
-        match self {
-            Self::Zero => "0".into(),
-            Self::One => "1".into(),
-            Self::X => "X".into(),
         }
     }
 }
@@ -140,20 +128,6 @@ impl From<&str> for Mask {
         }
 
         Self { bits }
-    }
-}
-
-// FIXME: remove
-impl fmt::Display for Mask {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // iterate in reverse to print from the most-significant bit
-        let bits = self
-            .bits
-            .iter()
-            .rev()
-            .map(MaskBit::to_string)
-            .collect::<Vec<_>>();
-        write!(f, "{}", bits.join(""))
     }
 }
 
