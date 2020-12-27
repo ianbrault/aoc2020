@@ -205,10 +205,7 @@ impl TryFrom<&'static str> for Passport {
         let mut builder = PassportBuilder::default();
 
         for entry in batch.split_whitespace().filter(|s| !s.is_empty()) {
-            let (key, value) = match split!(entry, ':') {
-                [k, v] => (*k, *v),
-                _ => unreachable!(),
-            };
+            split_into!(entry, ':', key, value);
             builder.set(key, value)?;
         }
 
