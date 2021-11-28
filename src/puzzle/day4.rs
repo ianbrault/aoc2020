@@ -286,7 +286,7 @@ impl Puzzle for Day4 {
             .filter(|&b| b)
             .count();
 
-        Ok((n_valid as u64).into())
+        Ok(n_valid.into())
     }
 
     // In your batch file, how many passports are valid?
@@ -301,6 +301,6 @@ impl Puzzle for Day4 {
             }
         }
 
-        Ok((passports.len() as u64).into())
+        Ok(passports.len().into())
     }
 }

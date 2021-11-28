@@ -56,14 +56,6 @@ enum Visibility {
     NotSet,
 }
 
-// note: unfortunately, we have to hard-code these values, const-generics are
-// still in the final stages of stabilization at the time of writing :(
-// note: we can cheat a bit by adding an extra cell to the borders of the grid
-// so we do not have to bounds-check when checking neighbors
-const GRID_SIZE: usize = 98 + 2;
-const GRID_LENGTH: usize = GRID_SIZE * GRID_SIZE;
-type Grid = [State; GRID_LENGTH];
-
 // the ferry seating is a cellular automaton
 //
 // the rule is:
@@ -72,13 +64,18 @@ type Grid = [State; GRID_LENGTH];
 // neighborhood are also occupied, the seat becomes empty; otherwise, no change
 //
 // the neighborhood includes up, down, left, right, and diagonals
-struct FerryAutomaton {
+struct FerryAutomaton<const GRID_SIZE: usize>
+where
+    [(); (GRID_SIZE + 2) * (GRID_SIZE + 2)]: Sized,
+{
     // automaton generation is double-buffered; the rules are applied to the
     // current generation and results are stored in the future generation which
     // allows us to do an "atomic update", i.e. the incomplete results in the
     // future generation will not cause problems
-    generation_a: Grid,
-    generation_b: Grid,
+    // note: we can cheat a bit by adding an extra cell to the borders of the
+    // grid so we do not have to bounds-check when checking neighbors
+    generation_a: [State; (GRID_SIZE + 2) * (GRID_SIZE + 2)],
+    generation_b: [State; (GRID_SIZE + 2) * (GRID_SIZE + 2)],
     // tracks the current (and thus, future) generation
     generation: u8,
     // rule configuration
@@ -86,7 +83,10 @@ struct FerryAutomaton {
     occupied_threshold: u8,
 }
 
-impl FerryAutomaton {
+impl<const GRID_SIZE: usize> FerryAutomaton<GRID_SIZE>
+where
+    [(); (GRID_SIZE + 2) * (GRID_SIZE + 2)]: Sized,
+{
     // to be used following From<&str> in support of the builder pattern
     fn with(mut self, visibility: Visibility, occupied_threshold: u8) -> Self {
         self.visibility = visibility;
@@ -97,18 +97,18 @@ impl FerryAutomaton {
     // note: gets from the current generation
     fn get(&self, row: usize, col: usize) -> State {
         if self.generation == 0 {
-            self.generation_a[(row * GRID_SIZE) + col]
+            self.generation_a[(row * (GRID_SIZE + 2)) + col]
         } else {
-            self.generation_b[(row * GRID_SIZE) + col]
+            self.generation_b[(row * (GRID_SIZE + 2)) + col]
         }
     }
 
     // note: sets to the future generation
     fn set(&mut self, row: usize, col: usize, state: State) {
         if self.generation == 0 {
-            self.generation_b[(row * GRID_SIZE) + col] = state;
+            self.generation_b[(row * (GRID_SIZE + 2)) + col] = state;
         } else {
-            self.generation_a[(row * GRID_SIZE) + col] = state;
+            self.generation_a[(row * (GRID_SIZE + 2)) + col] = state;
         }
     }
 
@@ -130,7 +130,7 @@ impl FerryAutomaton {
         let mut y = (from_y as i32) + dy;
         let mut x = (from_x as i32) + dx;
 
-        while x >= 0 && y >= 0 && (x as usize) < GRID_SIZE && (y as usize) < GRID_SIZE {
+        while x >= 0 && y >= 0 && (x as usize) < (GRID_SIZE + 2) && (y as usize) < (GRID_SIZE + 2) {
             match self.get(y as usize, x as usize) {
                 State::Occupied => return true,
                 State::Empty => return false,
@@ -198,8 +198,8 @@ impl FerryAutomaton {
         let mut changed = 0;
 
         // iterate thru the grid, accounting for the padding along the borders
-        for row in 1..=(GRID_SIZE - 2) {
-            for col in 1..=(GRID_SIZE - 2) {
+        for row in 1..=GRID_SIZE {
+            for col in 1..=GRID_SIZE {
                 let mut state = self.get(row, col);
                 // note: save a bit by not checking adjacencies for the floor
                 if state.is_empty() && self.visible_occupied(row, col) == 0 {
@@ -240,16 +240,19 @@ impl FerryAutomaton {
     }
 }
 
-impl From<&'static str> for FerryAutomaton {
+impl<const GRID_SIZE: usize> From<&'static str> for FerryAutomaton<GRID_SIZE>
+where
+    [(); (GRID_SIZE + 2) * (GRID_SIZE + 2)]: Sized,
+{
     fn from(s: &'static str) -> Self {
         // build up both generations from scratch
-        let mut generation_a = [State::Floor; GRID_LENGTH];
-        let mut generation_b = [State::Floor; GRID_LENGTH];
+        let mut generation_a = [State::Floor; (GRID_SIZE + 2) * (GRID_SIZE + 2)];
+        let mut generation_b = [State::Floor; (GRID_SIZE + 2) * (GRID_SIZE + 2)];
 
         for (row, line) in input_to_lines(s).enumerate() {
             for (col, c) in line.chars().enumerate() {
                 // note: account for the row of padding in front
-                let i = ((row + 1) * GRID_SIZE) + col + 1;
+                let i = ((row + 1) * (GRID_SIZE + 2)) + col + 1;
                 let state = State::from(c);
                 generation_a[i] = state;
                 generation_b[i] = state;
@@ -275,11 +278,13 @@ impl Day11 {
     }
 }
 
+const SIZE: usize = 98;
+
 impl Puzzle for Day11 {
     // Simulate your seating area by applying the seating rules repeatedly
     // until no seats change state. How many seats end up occupied?
     fn part1(&self) -> Result<Solution> {
-        let mut automaton = FerryAutomaton::from(INPUT).with(Visibility::Adjacent, 4);
+        let mut automaton = FerryAutomaton::<SIZE>::from(INPUT).with(Visibility::Adjacent, 4);
         automaton.run_to_completion();
         Ok(automaton.occupied_seats().into())
     }
@@ -288,7 +293,7 @@ impl Puzzle for Day11 {
     // becoming empty, once equilibrium is reached, how many seats end up
     // occupied?
     fn part2(&self) -> Result<Solution> {
-        let mut automaton = FerryAutomaton::from(INPUT).with(Visibility::LineOfSight, 5);
+        let mut automaton = FerryAutomaton::<SIZE>::from(INPUT).with(Visibility::LineOfSight, 5);
         automaton.run_to_completion();
         Ok(automaton.occupied_seats().into())
     }

@@ -136,7 +136,7 @@ impl Puzzle for Day2 {
             .filter(|(pwd, policy)| pwd.is_valid(policy, PasswordPolicyRule::RangePolicy))
             .count();
 
-        Ok((n_valid as u64).into())
+        Ok(n_valid.into())
     }
 
     // How many passwords are valid according to the new (position-based)
@@ -149,6 +149,6 @@ impl Puzzle for Day2 {
             .filter(|(pwd, policy)| pwd.is_valid(policy, PasswordPolicyRule::PositionPolicy))
             .count();
 
-        Ok((n_valid as u64).into())
+        Ok(n_valid.into())
     }
 }

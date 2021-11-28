@@ -2,6 +2,8 @@
 ** src/main.rs
 */
 
+#![feature(generic_const_exprs)]
+
 #[macro_use]
 mod utils;
 

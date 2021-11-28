@@ -3,6 +3,14 @@
 */
 
 mod day1;
+mod day10;
+mod day11;
+mod day12;
+mod day13;
+mod day14;
+mod day15;
+mod day16;
+mod day17;
 mod day2;
 mod day3;
 mod day4;
@@ -11,13 +19,6 @@ mod day6;
 mod day7;
 mod day8;
 mod day9;
-mod day10;
-mod day11;
-mod day12;
-mod day13;
-mod day14;
-mod day15;
-mod day16;
 
 use std::error;
 use std::fmt;
@@ -40,6 +41,12 @@ impl From<i64> for Solution {
 impl From<u64> for Solution {
     fn from(n: u64) -> Self {
         Self::UInt(n)
+    }
+}
+
+impl From<usize> for Solution {
+    fn from(n: usize) -> Self {
+        Self::UInt(n as u64)
     }
 }
 
@@ -76,6 +83,7 @@ pub fn all_puzzles() -> Result<Vec<Box<dyn Puzzle>>> {
         Box::new(day14::Day14::new()),
         Box::new(day15::Day15::new()),
         Box::new(day16::Day16::new()),
+        Box::new(day17::Day17::new()),
     ])
 }
 

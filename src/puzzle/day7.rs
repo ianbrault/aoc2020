@@ -159,7 +159,7 @@ impl Puzzle for Day7 {
             solver.process_rule(rule);
         }
 
-        Ok((solver.solved_set.len() as u64).into())
+        Ok(solver.solved_set.len().into())
     }
 
     // How many individual bags are required inside your single shiny gold bag?
