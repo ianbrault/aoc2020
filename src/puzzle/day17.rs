@@ -182,9 +182,14 @@ impl CubeAutomaton4D {
     }
 
     fn active_neighbors(&self, x: i64, y: i64, z: i64, w: i64) -> usize {
-        let active = itertools::iproduct!((x - 1)..=(x + 1), (y - 1)..=(y + 1), (z - 1)..=(z + 1), (w - 1)..=(w + 1))
-            .filter(|(dx, dy, dz, dw)| self.is_active(*dx, *dy, *dz, *dw))
-            .count();
+        let active = itertools::iproduct!(
+            (x - 1)..=(x + 1),
+            (y - 1)..=(y + 1),
+            (z - 1)..=(z + 1),
+            (w - 1)..=(w + 1)
+        )
+        .filter(|(dx, dy, dz, dw)| self.is_active(*dx, *dy, *dz, *dw))
+        .count();
         // exclude the given point
         if self.is_active(x, y, z, w) {
             active - 1
